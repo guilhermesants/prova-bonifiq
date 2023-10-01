@@ -11,11 +11,6 @@ namespace ProvaPub.Models
             _creditCard = creditCard;
         }
 
-        public override Order MakePayment()
-        {
-            // regra para pagamento via cartao de credito
-            return new Order { Value = PaymentValue, OrderDate = DateTime.Now };
-        }
-
+        public bool CardIsValid() => _creditCard.Number.Length == 16 && !String.IsNullOrEmpty(_creditCard.Number);
     }
 }

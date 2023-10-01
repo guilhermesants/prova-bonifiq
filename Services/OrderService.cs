@@ -3,11 +3,8 @@ using ProvaPub.Models.abstracts;
 
 namespace ProvaPub.Services
 {
-	public class OrderService
+	public abstract class OrderService<T> where T : class
 	{
-		public async Task<Order> PayOrder(Payment payment)
-		{
-			return await Task.FromResult(payment.MakePayment());
-		}
+		public abstract Task<Order> PayOrder(T payment);
 	}
 }

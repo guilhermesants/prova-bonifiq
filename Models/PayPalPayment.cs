@@ -8,10 +8,5 @@ namespace ProvaPub.Models
         {
         }
 
-        public override Order MakePayment()
-        {
-            // regra para pagamento via paypal
-            return new Order { Value = PaymentValue, OrderDate = DateTime.Now };
-        }
     }
 }

@@ -20,7 +20,7 @@ namespace ProvaPub.Controllers
 		[HttpGet("orders/pix")]
 		public async Task<Order> PixPlaceOrder([FromBody] PlaceOrder placeOrder)
 		{ 
-			return await new OrderService().PayOrder(
+			return await new PixOrderService().PayOrder(
 					new PixPayment(placeOrder.PaymentValue, placeOrder.CustomerId)
 				);
 		}
@@ -28,7 +28,7 @@ namespace ProvaPub.Controllers
         [HttpGet("orders/paypal")]
         public async Task<Order> PaypalPlaceOrder([FromBody] PlaceOrder placeOrder)
         {
-            return await new OrderService().PayOrder(
+            return await new PayPalOrderService().PayOrder(
                     new PayPalPayment(placeOrder.PaymentValue, placeOrder.CustomerId)
                 );
         }
@@ -36,11 +36,13 @@ namespace ProvaPub.Controllers
         [HttpGet("orders/creditcard")]
         public async Task<IActionResult> CreditcardPlaceOrder([FromBody] CreditCardPlaceOrder placeOrder)
         {
-			if (!placeOrder.Card.isValid()) return BadRequest("Dados do cartão inválidos");
-
-            return Ok(await new OrderService().PayOrder(
+            var resultOrder = await new CreditCardOrderService().PayOrder(
                     new CreditCardPayment(placeOrder.Card, placeOrder.PaymentValue, placeOrder.CustomerId)
-                ));
+                );
+
+			if (resultOrder is null) return BadRequest("Erro ao processar pedido");
+
+			return Ok(resultOrder);
         }
 
     }
