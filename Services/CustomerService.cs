@@ -5,22 +5,12 @@ using ProvaPub.Services.Interfaces;
 
 namespace ProvaPub.Services
 {
-    public class CustomerService : ICustomerService
+    public class CustomerService : Service<Customer>, ICustomerService
     {
-        TestDbContext _ctx;
+        public CustomerService(TestDbContext ctx) : base(ctx)
+        {}
 
-        public CustomerService(TestDbContext ctx)
-        {
-            _ctx = ctx;
-        }
-
-        public CustomerList ListCustomers(int? page)
-        {
-            var customerList = page.HasValue ? _ctx.Customers.ToList().Skip((page.Value - 1) * 10).Take(10).ToList() : _ctx.Customers.ToList();
-            return new CustomerList(customerList);
-        }
-
-        public IList<Customer> GetAll() => _ctx.Customers.ToList();
+        public CustomerList ListCustomers(int? page) => new CustomerList(GetElements(page));
 
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
         {
