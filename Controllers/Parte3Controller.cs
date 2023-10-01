@@ -2,6 +2,7 @@
 using ProvaPub.Models;
 using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.ViewModels;
 
 namespace ProvaPub.Controllers
 {
@@ -16,10 +17,31 @@ namespace ProvaPub.Controllers
 	[Route("[controller]")]
 	public class Parte3Controller :  ControllerBase
 	{
-		[HttpGet("orders")]
-		public async Task<Order> PlaceOrder(string paymentMethod, decimal paymentValue, int customerId)
-		{
-			return await new OrderService().PayOrder(paymentMethod, paymentValue, customerId);
+		[HttpGet("orders/pix")]
+		public async Task<Order> PixPlaceOrder([FromBody] PlaceOrder placeOrder)
+		{ 
+			return await new OrderService().PayOrder(
+					new PixPayment(placeOrder.PaymentValue, placeOrder.CustomerId)
+				);
 		}
-	}
+
+        [HttpGet("orders/paypal")]
+        public async Task<Order> PaypalPlaceOrder([FromBody] PlaceOrder placeOrder)
+        {
+            return await new OrderService().PayOrder(
+                    new PayPalPayment(placeOrder.PaymentValue, placeOrder.CustomerId)
+                );
+        }
+
+        [HttpGet("orders/creditcard")]
+        public async Task<IActionResult> CreditcardPlaceOrder([FromBody] CreditCardPlaceOrder placeOrder)
+        {
+			if (!placeOrder.Card.isValid()) return BadRequest("Dados do cartão inválidos");
+
+            return Ok(await new OrderService().PayOrder(
+                    new CreditCardPayment(placeOrder.Card, placeOrder.PaymentValue, placeOrder.CustomerId)
+                ));
+        }
+
+    }
 }
