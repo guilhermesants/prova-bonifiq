@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProvaPub.Models;
-using ProvaPub.Repository;
-using ProvaPub.Services;
+using ProvaPub.Models.Enums;
+using ProvaPub.Services.Interfaces;
+
 
 namespace ProvaPub.Controllers
 {
 	
 	[ApiController]
+	[Produces("application/json")]
 	[Route("[controller]")]
 	public class Parte2Controller :  ControllerBase
 	{
@@ -18,24 +20,37 @@ namespace ProvaPub.Controllers
 		/// Como você faria pra criar uma estrutura melhor, com menos repetição de código? E quanto ao CustomerService/ProductService. Você acha que seria possível evitar a repetição de código?
 		/// 
 		/// </summary>
-		TestDbContext _ctx;
-		public Parte2Controller(TestDbContext ctx)
+		
+		private readonly IProductService _productService;
+		private readonly ICustomerService _customerService;
+
+		public Parte2Controller(IProductService productService, ICustomerService customerService)
 		{
-			_ctx = ctx;
+			_productService = productService;
+			_customerService = customerService;
 		}
 	
-		[HttpGet("products")]
-		public ProductList ListProducts(int page)
+		[HttpGet("products/{page?}")]
+		public ActionResult<ProductList> ListProducts(int? page)
 		{
-			var productService = new ProductService(_ctx);
-			return productService.ListProducts(page);
-		}
+            try {
+				return Ok(_productService.ListProducts(page));
+			} catch (Exception)
+			{
+				return StatusCode(500, $"Ocorreu um erro com o código: {ErrorMessage.ErroInterno}");
+			}
+        }
 
-		[HttpGet("customers")]
-		public CustomerList ListCustomers(int page)
+		[HttpGet("customers/{page?}")]
+		public ActionResult<CustomerList> ListCustomers(int? page)
 		{
-			var customerService = new CustomerService(_ctx);
-			return customerService.ListCustomers(page);
+			try
+			{
+				return Ok(_customerService.ListCustomers(page));
+			} catch (Exception)
+			{
+                return StatusCode(500, $"Ocorreu um erro com o código: {ErrorMessage.ErroInterno}");
+            }
 		}
 	}
 }
