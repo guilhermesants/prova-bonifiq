@@ -17,7 +17,7 @@ namespace ProvaPub.Controllers
 	[Route("[controller]")]
 	public class Parte3Controller :  ControllerBase
 	{
-		[HttpGet("orders/pix")]
+		[HttpPost("orders/pix")]
 		public async Task<Order> PixPlaceOrder([FromBody] PlaceOrder placeOrder)
 		{ 
 			return await new PixOrderService().PayOrder(
@@ -25,7 +25,7 @@ namespace ProvaPub.Controllers
 				);
 		}
 
-        [HttpGet("orders/paypal")]
+        [HttpPost("orders/paypal")]
         public async Task<Order> PaypalPlaceOrder([FromBody] PlaceOrder placeOrder)
         {
             return await new PayPalOrderService().PayOrder(
@@ -33,7 +33,7 @@ namespace ProvaPub.Controllers
                 );
         }
 
-        [HttpGet("orders/creditcard")]
+        [HttpPost("orders/creditcard")]
         public async Task<IActionResult> CreditcardPlaceOrder([FromBody] CreditCardPlaceOrder placeOrder)
         {
             var resultOrder = await new CreditCardOrderService().PayOrder(

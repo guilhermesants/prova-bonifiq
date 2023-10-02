@@ -35,5 +35,11 @@ namespace ProvaPub.Services
 
             return true;
         }
+
+        public bool Create(Customer model)
+        {
+            _ctx.Customers.Add(model);
+            return _ctx.SaveChanges() > 0;
+        }
     }
 }

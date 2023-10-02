@@ -9,6 +9,11 @@ namespace ProvaPub.Services
         public ProductService(TestDbContext ctx) : base(ctx)
         {}
 
+        public bool Create(Product model)
+        {
+            throw new NotImplementedException();
+        }
+
         public ProductList ListProducts(int? page) => new ProductList(GetElements(page));
         
 
